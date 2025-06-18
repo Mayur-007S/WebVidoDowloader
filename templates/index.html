@@ -1,0 +1,192 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-lg mb-5">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0"><i class="fas fa-download me-2"></i>Download Videos</h2>
+            </div>
+            <div class="card-body">
+                <form id="download-form" action="{{ url_for('download_video') }}" method="post" class="mb-4">
+                    <div class="mb-3">
+                        <label for="url" class="form-label">Video URL:</label>
+                        <div class="input-group">
+                            <input 
+                                type="url" 
+                                class="form-control" 
+                                id="url" 
+                                name="url" 
+                                placeholder="https://example.com/video-page" 
+                                required
+                                autocomplete="off"
+                            >
+                            <button type="button" id="check-url" class="btn btn-info">
+                                <i class="fas fa-search me-1"></i> Check
+                            </button>
+                        </div>
+                        <div class="form-text">Enter the URL of the webpage or social media post containing the video</div>
+                    </div>
+                    
+                    <div class="alert alert-info small">
+                        <i class="fas fa-info-circle me-1"></i> <strong>New feature!</strong> Videos now download directly to your device (Windows/Android) with real-time progress tracking in your browser.
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="download-path" class="form-label">Download Location:</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="download-path" 
+                            name="download_path" 
+                            value="downloads" 
+                            placeholder="downloads"
+                        >
+                        <div class="form-text">Specify the folder where videos will be saved</div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-download me-2"></i>Download Video
+                        </button>
+                    </div>
+                </form>
+                
+                <div id="url-check-result" class="alert d-none"></div>
+                <div id="download-progress" class="progress d-none mb-3">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;">0%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-header bg-secondary text-white">
+                <h3 class="mb-0"><i class="fas fa-info-circle me-2"></i>How It Works</h3>
+            </div>
+            <div class="card-body">
+                <div class="accordion" id="howToAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Step 1: Enter the Video URL
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#howToAccordion">
+                            <div class="accordion-body">
+                                Paste the URL of the webpage that contains the video you want to download. You can use the "Check" button to verify if the URL contains downloadable video content.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Step 2: Specify Download Location
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#howToAccordion">
+                            <div class="accordion-body">
+                                Enter the folder path where you want to save the downloaded video. The default is the "downloads" folder in the current directory.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                Step 3: Download the Video
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#howToAccordion">
+                            <div class="accordion-body">
+                                Click the "Download Video" button to start the download process. The application will analyze the webpage, locate the video source, and download it directly to your device (Windows or Android). During the download, you'll see detailed progress information including:
+                                <ul class="mt-2">
+                                    <li>Real-time download progress percentage</li>
+                                    <li>File size information in human-readable format</li>
+                                    <li>Current download speed</li>
+                                    <li>Estimated time remaining</li>
+                                </ul>
+                                <p class="mt-2 small">Once the download is complete, you'll see a "Save to Device" button to save the video to your chosen location.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingFour">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                Supported Video Types
+                            </button>
+                        </h2>
+                        <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#howToAccordion">
+                            <div class="accordion-body">
+                                <p>The downloader supports various video formats including MP4, AVI, MOV, FLV, WMV, MKV, WebM, and more. It can extract videos embedded in webpages and direct video links.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingFive">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                Supported Social Media Platforms
+                            </button>
+                        </h2>
+                        <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#howToAccordion">
+                            <div class="accordion-body">
+                                <p>This downloader can extract videos from popular social media platforms:</p>
+                                <ul class="list-group">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        YouTube
+                                        <span class="badge bg-success rounded-pill">Supported</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Instagram
+                                        <span class="badge bg-success rounded-pill">Supported</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Twitter (X)
+                                        <span class="badge bg-success rounded-pill">Supported</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Facebook
+                                        <span class="badge bg-success rounded-pill">Supported</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        TikTok
+                                        <span class="badge bg-success rounded-pill">Supported</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Vimeo
+                                        <span class="badge bg-success rounded-pill">Supported</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Reddit
+                                        <span class="badge bg-success rounded-pill">Supported</span>
+                                    </li>
+                                </ul>
+                                <p class="mt-3 small">Note: For some platforms, successful downloading may depend on the privacy settings of the content.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingSix">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                                Tips for Social Media Downloads
+                            </button>
+                        </h2>
+                        <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#howToAccordion">
+                            <div class="accordion-body">
+                                <p>For the best results when downloading from social media platforms:</p>
+                                <ul>
+                                    <li>Use the direct URL to the specific post containing the video (not a profile or feed URL)</li>
+                                    <li>For YouTube: Use the standard watch URL (e.g., <code>https://youtube.com/watch?v=VIDEO_ID</code>)</li>
+                                    <li>For Instagram: Use post or reel URLs (e.g., <code>https://instagram.com/p/POST_ID/</code>)</li>
+                                    <li>For Twitter/X: Use the direct tweet URL that contains the video</li>
+                                    <li>Some platforms may require a longer processing time</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
